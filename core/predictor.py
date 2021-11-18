@@ -33,7 +33,7 @@ try:
 except OSError:
     with open("weights/weights.txt") as f:
         links = ["  "+l for l in f.readlines()]
-    log("Похоже весов нет! Скачайте их по одной из этих ссылок: \n"+'\n'.join(links))
+    log("Похоже весов нет! Скачайте их по одной из этих ссылок: \n"+''.join(links))
     import sys
     sys.exit()
 

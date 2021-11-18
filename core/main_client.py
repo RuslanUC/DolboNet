@@ -60,10 +60,7 @@ class MainClient(Client):
         # Команда изменения температуры семплирования
         # Не стали использовать nextcord.ext.commands, т.к. это единственная команда на данный момент
         # Потом добавим, если потребуется
-        if (
-            message.author.guild_permissions.administrator
-            and message.content.startswith(config.command_temperature_change.lower())
-        ):
+        if message.author.guild_permissions.administrator and message.content.startswith(config.command_temperature_change.lower()):
             mc_splitted = message.content.split()
             if len(mc_splitted) > 1:
                 set_ = self.set_temperature(mc_splitted[1])
@@ -84,11 +81,7 @@ class MainClient(Client):
 
     async def on_message(self, message):
         await self.wait_until_ready()
-        if (
-            not isinstance(message.channel, TextChannel)
-            or (message.author.bot and message.author != self.user)
-            or message.type != MessageType.default
-        ):
+        if (not isinstance(message.channel, TextChannel) or (message.author.bot and message.author != self.user) or message.type != MessageType.default):
             return
         if not message.channel.permissions_for(message.guild.me).send_messages:
             return
@@ -100,17 +93,20 @@ class MainClient(Client):
             return
         if message.author == self.user:
             return
-        my_mention = self.user in message.mentions
+        ref = False
+        try:
+            ref = await message.channel.fetch_message(message.reference.message_id)
+            if ref.author == self.user:
+                ref = True
+        except:
+            pass
+        my_mention = self.user in message.mentions or ref
         if self.decision(config.no_mention_prob) or (my_mention and self.decision(config.mention_prob)):
             async with message.channel.typing():
                 input_messages = self.channel_deques[message.channel.id]
                 input_tensor = self.tokenizer.encode_input(input_messages, self.user)
-                output_tensor = predictor.decode_sequence(
-                    input_tensor, self.temperature
-                )
-                output_message, token_count = self.tokenizer.decode_output(
-                    self, input_messages, output_tensor
-                )
+                output_tensor = predictor.decode_sequence(input_tensor, self.temperature)
+                output_message, token_count = self.tokenizer.decode_output(self, input_messages, output_tensor)
                 if config.use_delay:
                     await asyncio.sleep(random.uniform(0.1, 0.2) * token_count)
                 if output_message:
