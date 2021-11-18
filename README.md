@@ -21,8 +21,8 @@
 
 ## Windows 10 64-bit
 Протестировано на **2 x 2.6 ГГц CPU + 4 ГБ RAM**.
-- Установите [**Python 3.8 64-bit**][Python]
-- При установке [**Python 3.8 64-bit**][Python] должны стоять галочки `Install launcher for all users (recommended)` и `Add Python 3.9 to PATH`
+- Установите [**Python 3.9 64-bit**][Python]
+- При установке [**Python 3.9 64-bit**][Python] должны стоять галочки `Install launcher for all users (recommended)` и `Add Python 3.9 to PATH`
 - Установите **[Git]**
 - Установите [**Visual C++ Redistributable**][Vcredist] - необходим для `scipy`
 - Откройте **Git Bash**, щелкнув правой кнопкой мыши по пустому месту внутри папки *(например, **Мои документы**)* и выбрав `Git Bash Here`
@@ -125,10 +125,8 @@
 > _На каких серверах этот бот уже есть?_
 
 Мы знаем, что бот уже хостится здесь:
-- **[! REPUBLIC OF PEPESTAN & ITS CITIZENS][Server1]**
-- **[FUNCLUB][Server4]**
-- **[LeviaFun][Server3]**
-- **[! Molecular Dream World ☘][Server2]**
+- **[LeviaFun][Server1]**
+- **[FUNCLUB][Server2]**
 
 [Напишите нам], чтобы попасть в этот список.
 
@@ -196,14 +194,14 @@
 
 [Discord]: https://discordapp.com/
 [DiscordDevelopers]: https://discordapp.com/developers/applications/
-[Tutorial]: https://github.com/tensorflow/examples/blob/master/community/en/transformer_chatbot.ipynb
+[Tutorial]: https://github.com/cuicaihao/examples-TF/blob/master/community/en/transformer_chatbot.ipynb
 [TensorFlow 2]: https://www.tensorflow.org
 [HowToGetToken]: https://www.writebots.com/discord-bot-token/
 [HowToGPU]: https://www.tensorflow.org/install/gpu#software_requirements
 [Transformer]: https://arxiv.org/abs/1706.03762
 [PopularServers]: https://discord-server.com/?language=ru&page=1&rowsOnPage=50&sort=count_desc
 [N-grams]: https://ru.wikipedia.org/wiki/N-%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B0
-[Python]: https://www.python.org/ftp/python/3.8.6/python-3.8.6-amd64.exe
+[Python]: https://www.python.org/ftp/python/3.9.0/python-3.9.0-amd64.exe
 [Git]: https://gitforwindows.org/
 [Vcredist]: https://www.microsoft.com/en-us/download/details.aspx?id=48145
 [BMC]: https://www.buymeacoffee.com/sergree
@@ -213,7 +211,7 @@
 [Book]: https://www.piter.com/product/glubokoe-obuchenie
 [Rebyata]: http://lurkmore.to/%D0%91%D1%8B%D0%B4%D0%BB%D0%BE
 [CNN]: https://ru.wikipedia.org/wiki/%D0%A1%D0%B2%D1%91%D1%80%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F_%D0%BD%D0%B5%D0%B9%D1%80%D0%BE%D0%BD%D0%BD%D0%B0%D1%8F_%D1%81%D0%B5%D1%82%D1%8C
-[Discord API]: https://github.com/Rapptz/discord.py
+[Discord API]: https://github.com/nextcord/nextcord
 [Tweet]: https://twitter.com/elonmusk/status/1095574487104315392
 [Temperature]: https://cs.stackexchange.com/questions/79241/what-is-temperature-in-lstm-and-neural-networks-generally
 [Trends]: http://lurkmore.to/%D0%9C%D0%BE%D0%B4%D0%B0
@@ -222,10 +220,8 @@
 [Universal Transformer]: https://arxiv.org/abs/1807.03819
 [Transformer XL]: https://arxiv.org/abs/1901.02860
 [Git LFS]: https://git-lfs.github.com/
-[Server1]: https://discordapp.com/invite/TVw8NKv
-[Server2]: https://discordapp.com/invite/HmK6xsS
-[Server3]: https://discordapp.com/invite/XUJq5WR
-[Server4]: https://discordapp.com/invite/mUsxsST
+[Server1]: https://discordapp.com/invite/XUJq5WR
+[Server2]: https://discordapp.com/invite/mUsxsST
 [BotInvite]: https://discordapp.com/api/oauth2/authorize?client_id=584636018125176834&permissions=3072&scope=bot
 [Setup]: https://github.com/sergree/DolboNet#%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0
 [Напишите нам]: mailto:wokashi.rg@gmail.com

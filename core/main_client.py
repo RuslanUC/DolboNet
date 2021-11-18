@@ -5,7 +5,7 @@
 from nextcord import Client, Game, MessageType, TextChannel
 import collections
 import random
-import asyncio
+from asyncio import sleep as asleep
 import config
 from core.tokenizer import Tokenizer
 from utils.tprint import log
@@ -81,7 +81,7 @@ class MainClient(Client):
 
     async def on_message(self, message):
         await self.wait_until_ready()
-        if (not isinstance(message.channel, TextChannel) or (message.author.bot and message.author != self.user) or message.type != MessageType.default):
+        if (not isinstance(message.channel, TextChannel) or message.author.bot or message.type not in [MessageType.default, MessageType.reply]):
             return
         if not message.channel.permissions_for(message.guild.me).send_messages:
             return
@@ -90,8 +90,6 @@ class MainClient(Client):
         self.channel_deques[message.channel.id].append(message)
         command_used = await self.handle_command(message)
         if command_used:
-            return
-        if message.author == self.user:
             return
         ref = False
         try:
@@ -108,6 +106,6 @@ class MainClient(Client):
                 output_tensor = predictor.decode_sequence(input_tensor, self.temperature)
                 output_message, token_count = self.tokenizer.decode_output(self, input_messages, output_tensor)
                 if config.use_delay:
-                    await asyncio.sleep(random.uniform(0.1, 0.2) * token_count)
+                    await asleep(random.uniform(0.1, 0.2) * token_count)
                 if output_message:
                     await message.channel.send(output_message[:2000])
