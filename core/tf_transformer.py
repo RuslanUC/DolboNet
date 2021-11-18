@@ -3,7 +3,6 @@
 
 import tensorflow as tf
 
-
 # Scaled dot product attention
 def scaled_dot_product_attention(query, key, value, mask):
     """Calculate the attention weights. """
@@ -237,23 +236,15 @@ def decoder(vocab_size, num_layers, units, d_model, num_heads, dropout, name="de
 
 
 # Transformer
-def transformer(
-    vocab_size, num_layers, units, d_model, num_heads, dropout, name="transformer"
-):
+def transformer(vocab_size, num_layers, units, d_model, num_heads, dropout, name="transformer"):
     inputs = tf.keras.Input(shape=(None,), name="inputs")
     dec_inputs = tf.keras.Input(shape=(None,), name="dec_inputs")
 
-    enc_padding_mask = tf.keras.layers.Lambda(
-        create_padding_mask, output_shape=(1, 1, None), name="enc_padding_mask"
-    )(inputs)
+    enc_padding_mask = tf.keras.layers.Lambda(create_padding_mask, output_shape=(1, 1, None), name="enc_padding_mask")(inputs)
     # mask the future tokens for decoder inputs at the 1st attention block
-    look_ahead_mask = tf.keras.layers.Lambda(
-        create_look_ahead_mask, output_shape=(1, None, None), name="look_ahead_mask"
-    )(dec_inputs)
+    look_ahead_mask = tf.keras.layers.Lambda(create_look_ahead_mask, output_shape=(1, None, None), name="look_ahead_mask")(dec_inputs)
     # mask the encoder outputs for the 2nd attention block
-    dec_padding_mask = tf.keras.layers.Lambda(
-        create_padding_mask, output_shape=(1, 1, None), name="dec_padding_mask"
-    )(inputs)
+    dec_padding_mask = tf.keras.layers.Lambda(create_padding_mask, output_shape=(1, 1, None), name="dec_padding_mask")(inputs)
 
     enc_outputs = encoder(
         vocab_size=vocab_size,

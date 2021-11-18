@@ -6,7 +6,6 @@ import numpy as np
 from scipy.special import softmax
 from core.tf_transformer import transformer
 import config
-from core.yadisk import download_yadisk_link
 from utils.tprint import log
 from tqdm import tqdm
 
@@ -32,15 +31,13 @@ model = transformer(
 try:
     model.load_weights(config.weights_file)
 except OSError:
-    log(f"Похоже весов нет! Попробую скачать с Яндекс.Диска, подождите 2 минуты...")
     with open("weights/weights.txt") as f:
-        url = f.readline().strip()
-        download_yadisk_link(url, filename=config.weights_file)
-        model.load_weights(config.weights_file)
+        links = ["  "+l for l in f.readlines()]
+    log("Похоже весов нет! Скачайте их по одной из этих ссылок: \n"+'\n'.join(links))
+    import sys
+    sys.exit()
 
-model.compile(
-    optimizer="rmsprop", loss="sparse_categorical_crossentropy", metrics=["accuracy"]
-)
+model.compile(optimizer="rmsprop", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
 
 log(f"{config.weights_file} загружен.")
 
@@ -79,10 +76,6 @@ def decode_sequence(input_seq, temperature, prewarm=False):
 
 
 if config.use_prewarm:
-    log(
-        "Подготовительный прогон трансформера пустыми данными (читайте why_prewarm.txt)..."
-    )
-    decode_sequence(
-        np.ones((1, config.max_len), dtype="uint16"), config.temperature, prewarm=True
-    )
+    log("Подготовительный прогон трансформера пустыми данными (читайте why_prewarm.txt)...")
+    decode_sequence(np.ones((1, config.max_len), dtype="uint16"), config.temperature, prewarm=True)
     log("Прогон трансформера завершен.")

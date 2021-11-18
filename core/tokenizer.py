@@ -7,7 +7,6 @@ import re
 import pickle
 import cyrtranslit
 
-
 class Tokenizer:
 
     entity_to_word = {
@@ -100,9 +99,7 @@ class Tokenizer:
         my_id = me.id
         tokenized_input = []
         for message in messages:
-            tokenized_input.extend(
-                self.tokenize(message.content, message.author.id, my_id=my_id)
-            )
+            tokenized_input.extend(self.tokenize(message.content, message.author.id, my_id=my_id))
         if len(tokenized_input) > max_len:
             tokenized_input = tokenized_input[-max_len:]
         for idx, token in enumerate(tokenized_input):

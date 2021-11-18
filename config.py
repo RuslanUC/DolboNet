@@ -1,12 +1,12 @@
 # Токен бота в Discord
 # Как получить: https://www.writebots.com/discord-bot-token/
-token = "ВСТАВЬТЕ_ТОКЕН_СЮДА"
+token = "TOKEN"
 
 # С какой вероятностью бот отправит сообщение, если обнаружит сообщение с его упоминанием (от 0 до 1)
 mention_prob = 1  # 100%
 
 # С какой вероятностью бот отправит сообщение, если обнаружит сообщение без его упоминания (от 0 до 1)
-no_mention_prob = 0.2  # 20%
+no_mention_prob = 0  # 0%
 
 # Температура семплирования - регулирует характер и разнообразие генерируемого текста
 # Примеры значений:
@@ -33,7 +33,7 @@ weights_file = "weights/dolbonet_004_100_0.1485_0.4306.h5"
 vocab_file = "vocab/vocab_full_10k_ru.pickle"
 
 # Статус бота в Discord
-discord_game_name = "github.com/sergree"
+discord_game_name = "DolboNet"
 
 # Величина словаря
 vocab_size = 10000

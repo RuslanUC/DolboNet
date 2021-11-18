@@ -2,12 +2,11 @@
 # by Sergree
 # https://github.com/sergree
 
-import discord
+from nextcord import Client
 
-
-class CheckingClient(discord.Client):
+class CheckingClient(Client):
     def __init__(self, **options):
         super().__init__(**options)
 
     async def on_ready(self):
-        await self.logout()
+        await self.close()

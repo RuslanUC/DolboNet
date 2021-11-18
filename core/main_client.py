@@ -2,7 +2,7 @@
 # by Sergree
 # https://github.com/sergree
 
-import discord
+from nextcord import Client, Game, MessageType, TextChannel
 import collections
 import random
 import asyncio
@@ -11,8 +11,7 @@ from core.tokenizer import Tokenizer
 from utils.tprint import log
 from core import predictor
 
-
-class MainClient(discord.Client):
+class MainClient(Client):
     def __init__(self, **options):
         super().__init__(**options)
         self.temperature = config.temperature
@@ -33,16 +32,12 @@ class MainClient(discord.Client):
         log("Коллекция кастомных emoji обновлена.")
 
     def random_emoji(self):
-        return (
-            str(random.choice(self.custom_emoji_collection))
-            if self.custom_emoji_collection
-            else ""
-        )
+        return (str(random.choice(self.custom_emoji_collection)) if self.custom_emoji_collection else "")
 
     async def on_ready(self):
         log(f"Подключение к Discord успешно под пользователем @{self.user}.")
         self.load_custom_emoji_collection()
-        game = discord.Game(config.discord_game_name)
+        game = Game(config.discord_game_name)
         await self.change_presence(activity=game)
 
     async def on_guild_join(self, guild):
@@ -63,7 +58,7 @@ class MainClient(discord.Client):
 
     async def handle_command(self, message):
         # Команда изменения температуры семплирования
-        # Не стали использовать discord.ext.commands, т.к. это единственная команда на данный момент
+        # Не стали использовать nextcord.ext.commands, т.к. это единственная команда на данный момент
         # Потом добавим, если потребуется
         if (
             message.author.guild_permissions.administrator
@@ -90,17 +85,15 @@ class MainClient(discord.Client):
     async def on_message(self, message):
         await self.wait_until_ready()
         if (
-            not isinstance(message.channel, discord.TextChannel)
+            not isinstance(message.channel, TextChannel)
             or (message.author.bot and message.author != self.user)
-            or message.type != discord.MessageType.default
+            or message.type != MessageType.default
         ):
             return
         if not message.channel.permissions_for(message.guild.me).send_messages:
             return
         if message.channel.id not in self.channel_deques:
-            self.channel_deques[message.channel.id] = collections.deque(
-                maxlen=config.deque_max_len
-            )
+            self.channel_deques[message.channel.id] = collections.deque(maxlen=config.deque_max_len)
         self.channel_deques[message.channel.id].append(message)
         command_used = await self.handle_command(message)
         if command_used:
@@ -108,9 +101,7 @@ class MainClient(discord.Client):
         if message.author == self.user:
             return
         my_mention = self.user in message.mentions
-        if self.decision(config.no_mention_prob) or (
-            my_mention and self.decision(config.mention_prob)
-        ):
+        if self.decision(config.no_mention_prob) or (my_mention and self.decision(config.mention_prob)):
             async with message.channel.typing():
                 input_messages = self.channel_deques[message.channel.id]
                 input_tensor = self.tokenizer.encode_input(input_messages, self.user)
