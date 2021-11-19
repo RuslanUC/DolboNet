@@ -222,5 +222,5 @@
 [Git LFS]: https://git-lfs.github.com/
 [Server1]: https://discordapp.com/invite/XUJq5WR
 [Server2]: https://discordapp.com/invite/mUsxsST
-[Setup]: https://github.com/sergree/DolboNet#%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0
+[Setup]: https://github.com/RuslanUC/DolboNet#%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0
 [Напишите нам]: mailto:wokashi.rg@gmail.com
