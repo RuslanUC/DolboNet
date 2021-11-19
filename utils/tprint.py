@@ -2,7 +2,7 @@
 # by Sergree
 # https://github.com/sergree
 
-from datetime import datatime
+from datetime import datetime
 
 def current_time():
     return str(datetime.now()) + ": "

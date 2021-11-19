@@ -8,7 +8,6 @@ import pickle
 import cyrtranslit
 
 class Tokenizer:
-
     entity_to_word = {
         0: "_URL_",
         1: "_MY_MENTION_",

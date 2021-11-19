@@ -41,14 +41,12 @@ model.compile(optimizer="rmsprop", loss="sparse_categorical_crossentropy", metri
 
 log(f"{config.weights_file} загружен.")
 
-
 def sample(preds, temperature=1.0):
     preds = np.asarray(preds).astype("float64")
     preds = preds / temperature
     preds = softmax(preds)
     probas = np.random.multinomial(1, preds, 1)
     return np.argmax(probas)
-
 
 def decode_sequence(input_seq, temperature, prewarm=False):
     target_seq = np.zeros((1, 1), dtype="uint16")
