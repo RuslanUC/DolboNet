@@ -2,10 +2,10 @@
 # by Sergree
 # https://github.com/sergree
 
-import datetime
+from datetime import datatime
 
 def current_time():
-    return str(datetime.datetime.now()) + ": "
+    return str(datetime.now()) + ": "
 
 def log(*msg):
     print(current_time() + " ".join([str(x) for x in msg]))

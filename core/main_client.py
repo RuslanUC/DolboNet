@@ -10,11 +10,15 @@ import config
 from core.tokenizer import Tokenizer
 from utils.tprint import log
 from core import predictor
+from core.db import Database
 
 class MainClient(Client):
     def __init__(self, **options):
         super().__init__(**options)
-        self.temperature = config.temperature
+        if config.use_database:
+            self.db = Database("bot.db")
+        else:
+            self.temperature = config.temperature
         self.tokenizer = Tokenizer()
         self.tokenizer.load_vocab_from_file(config.vocab_file)
         self.channel_deques = {}
@@ -60,24 +64,22 @@ class MainClient(Client):
         # Команда изменения температуры семплирования
         # Не стали использовать nextcord.ext.commands, т.к. это единственная команда на данный момент
         # Потом добавим, если потребуется
-        if message.author.guild_permissions.administrator and message.content.startswith(config.command_temperature_change.lower()):
+        if message.author.guild_permissions.administrator and message.content.startswith(config.command_temperature_change):
             mc_splitted = message.content.split()
             if len(mc_splitted) > 1:
-                set_ = self.set_temperature(mc_splitted[1])
-                if set_:
-                    await message.channel.send(f"`temperature` ➡️ `{mc_splitted[1]}`")
+                try:
+                    temp = float(mc_splitted[1])
+                except ValueError:
                     return True
+                if temp <= 0:
+                    return True
+                if config.use_database:
+                    self.db.set_guild_settings(message.guild.id, temp)
+                else:
+                    self.temperature = temp
+                await message.channel.send(f"`temperature` ➡️ `{temp}`")
+                return True
         return False
-
-    def set_temperature(self, value):
-        try:
-            temperature = float(value)
-        except ValueError:
-            return False
-        if temperature <= 0:
-            return False
-        self.temperature = temperature
-        return True
 
     async def on_message(self, message):
         await self.wait_until_ready()
@@ -88,8 +90,7 @@ class MainClient(Client):
         if message.channel.id not in self.channel_deques:
             self.channel_deques[message.channel.id] = collections.deque(maxlen=config.deque_max_len)
         self.channel_deques[message.channel.id].append(message)
-        command_used = await self.handle_command(message)
-        if command_used:
+        if await self.handle_command(message):
             return
         ref = False
         try:
@@ -103,7 +104,7 @@ class MainClient(Client):
             async with message.channel.typing():
                 input_messages = self.channel_deques[message.channel.id]
                 input_tensor = self.tokenizer.encode_input(input_messages, self.user)
-                output_tensor = predictor.decode_sequence(input_tensor, self.temperature)
+                output_tensor = predictor.decode_sequence(input_tensor, self.temperature if not config.use_database else self.db.get_guild_settings(message.guild.id))
                 output_message, token_count = self.tokenizer.decode_output(self, input_messages, output_tensor)
                 if config.use_delay:
                     await asleep(random.uniform(0.1, 0.2) * token_count)
