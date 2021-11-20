@@ -77,13 +77,11 @@ class MultiHeadAttention(tf.keras.layers.Layer):
 
         return outputs
 
-
 # Padding mask
 def create_padding_mask(x):
     mask = tf.cast(tf.math.equal(x, 0), tf.float32)
     # (batch_size, 1, 1, sequence length)
     return mask[:, tf.newaxis, tf.newaxis, :]
-
 
 # Look-ahead mask
 def create_look_ahead_mask(x):
@@ -91,7 +89,6 @@ def create_look_ahead_mask(x):
     look_ahead_mask = 1 - tf.linalg.band_part(tf.ones((seq_len, seq_len)), -1, 0)
     padding_mask = create_padding_mask(x)
     return tf.maximum(look_ahead_mask, padding_mask)
-
 
 # Positional encoding
 class PositionalEncoding(tf.keras.layers.Layer):
@@ -121,7 +118,6 @@ class PositionalEncoding(tf.keras.layers.Layer):
     def call(self, inputs):
         return inputs + self.pos_encoding[:, : tf.shape(inputs)[1], :]
 
-
 # Encoder layer
 def encoder_layer(units, d_model, num_heads, dropout, name="encoder_layer"):
     inputs = tf.keras.Input(shape=(None, d_model), name="inputs")
@@ -139,7 +135,6 @@ def encoder_layer(units, d_model, num_heads, dropout, name="encoder_layer"):
     outputs = tf.keras.layers.LayerNormalization(epsilon=1e-6)(attention + outputs)
 
     return tf.keras.Model(inputs=[inputs, padding_mask], outputs=outputs, name=name)
-
 
 # Encoder
 def encoder(vocab_size, num_layers, units, d_model, num_heads, dropout, name="encoder"):
@@ -162,7 +157,6 @@ def encoder(vocab_size, num_layers, units, d_model, num_heads, dropout, name="en
         )([outputs, padding_mask])
 
     return tf.keras.Model(inputs=[inputs, padding_mask], outputs=outputs, name=name)
-
 
 # Decoder layer
 def decoder_layer(units, d_model, num_heads, dropout, name="decoder_layer"):
@@ -205,7 +199,6 @@ def decoder_layer(units, d_model, num_heads, dropout, name="decoder_layer"):
         name=name,
     )
 
-
 # Decoder
 def decoder(vocab_size, num_layers, units, d_model, num_heads, dropout, name="decoder"):
     inputs = tf.keras.Input(shape=(None,), name="inputs")
@@ -231,9 +224,7 @@ def decoder(vocab_size, num_layers, units, d_model, num_heads, dropout, name="de
     return tf.keras.Model(
         inputs=[inputs, enc_outputs, look_ahead_mask, padding_mask],
         outputs=outputs,
-        name=name,
-    )
-
+        name=name)
 
 # Transformer
 def transformer(vocab_size, num_layers, units, d_model, num_heads, dropout, name="transformer"):
