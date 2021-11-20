@@ -91,7 +91,7 @@ class Tokenizer:
       tokenized_input = tokenized_input[-max_len:]
     for idx, token in enumerate(tokenized_input):
       encoder_input_data[0, idx] = self.get_index_by_word(token)
-    return encoder_input_data
+    return encoder_input_data.tolist()[0]
 
 tokenizer = Tokenizer()
 tokenizer.load_vocab_from_file("vocab.pickle")
@@ -120,10 +120,13 @@ def tokenize(inputs, outputs):
   tokenized_outputs = []
 
   for i in inputs:
-    tokenized_inputs.append(tokenizer.encode_input(i.lower()))
+    a = tokenizer.encode_input(i.lower())
+    tokenized_inputs.append(a)
 
   for o in outputs:
     tokenized_outputs.append(tokenizer.encode_input(i.lower()))
+
+  print(1)
 
   tokenized_inputs = tf.keras.preprocessing.sequence.pad_sequences(tokenized_inputs, maxlen=MAX_LENGTH, padding='post')
   tokenized_outputs = tf.keras.preprocessing.sequence.pad_sequences(tokenized_outputs, maxlen=MAX_LENGTH, padding='post')
