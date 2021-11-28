@@ -1,9 +1,9 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
 import tensorflow as tf
 import re
 import numpy as np
 import pickle
 import cyrtranslit
+import sys
 
 class Tokenizer:
   entity_to_word = {
@@ -96,58 +96,46 @@ class Tokenizer:
 tokenizer = Tokenizer()
 tokenizer.load_vocab_from_file("vocab.pickle")
 
-def load_messages():
-  with open("messages.txt", encoding="utf8") as f:
-    data = f.read()
-    data = data.split("\n")
+MAX_LENGTH = 64
+
+def load_and_tokenize():
+  f = open(sys.argv[1], encoding="utf8") # 12гб ОЗУ каждые 7млн строк (~180 мб)
 
   inputs = []
   outputs = []
-  for i in range(len(data)-1):
-    inputs.append(data[i])
-    outputs.append(data[i+1])
+  l1 = None
+  i = 0
+  while True:
+    if i % 100000 == 0:
+      print(i)
+    if not l1:
+      l1 = f.readline().replace("\n", "")
+    l2 = f.readline().replace("\n", "")
+    if not l2:
+      break
+    inputs.append(tokenizer.encode_input(l1[:MAX_LENGTH].lower()))
+    outputs.append(tokenizer.encode_input(l2[:MAX_LENGTH].lower()))
+    l1 = l2
+    i += 1
+
+  f.close()
+
+  inputs = tf.keras.preprocessing.sequence.pad_sequences(inputs, maxlen=MAX_LENGTH, padding='post')
+  outputs = tf.keras.preprocessing.sequence.pad_sequences(outputs, maxlen=MAX_LENGTH, padding='post')
   return inputs, outputs
 
-questions, answers = load_messages()
-
-print('Sample question: {}'.format(questions[67]))
-print('Sample answer: {}'.format(answers[67]))
-
-MAX_LENGTH = 64
-
-def tokenize(inputs, outputs):
-  tokenized_inputs = []
-  tokenized_outputs = []
-
-  for i in inputs:
-    a = tokenizer.encode_input(i.lower())
-    tokenized_inputs.append(a)
-
-  for o in outputs:
-    tokenized_outputs.append(tokenizer.encode_input(i.lower()))
-
-  print(1)
-
-  tokenized_inputs = tf.keras.preprocessing.sequence.pad_sequences(tokenized_inputs, maxlen=MAX_LENGTH, padding='post')
-  tokenized_outputs = tf.keras.preprocessing.sequence.pad_sequences(tokenized_outputs, maxlen=MAX_LENGTH, padding='post')
-
-  return tokenized_inputs, tokenized_outputs
-
-questions, answers = tokenize(questions, answers)
+questions, answers = load_and_tokenize()
 print('Number of samples: {}'.format(len(questions)))
 
 BATCH_SIZE = 64
 BUFFER_SIZE = 20000
 
-dataset = tf.data.Dataset.from_tensor_slices((
-    {
-        'inputs': questions,
-        'dec_inputs': answers[:, :-1]
-    },
-    {
-        'outputs': answers[:, 1:]
-    },
-))
+dataset = tf.data.Dataset.from_tensor_slices(({
+  'inputs': questions,
+  'dec_inputs': answers[:, :-1]
+}, {
+  'outputs': answers[:, 1:]
+}))
 
 dataset = dataset.cache()
 dataset = dataset.shuffle(BUFFER_SIZE)
@@ -425,6 +413,10 @@ def accuracy(y_true, y_pred):
   return tf.keras.metrics.sparse_categorical_accuracy(y_true, y_pred)
 
 model.compile(optimizer=optimizer, loss=loss_function, metrics=[accuracy])
-EPOCHS = 20
-model.fit(dataset, epochs=EPOCHS)
+EPOCHS = 3
+try:
+  model.fit(dataset, epochs=EPOCHS)
+except KeyboardInterrupt:
+  model.save_weights("test_weights.h5")
+  exit()
 model.save_weights("test_weights.h5")
